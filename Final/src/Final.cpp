@@ -56,10 +56,6 @@ void *SortInFile(void *threadid) {
 	n[j]=n[j+1];
 	n[j+1]=temp;
 	}
-	for(int i=0;i<200;i++)
-		{
-		cout<<n[i]<<"\n";
-		}
 
 	file[tid] = fopen(file_name.c_str(), "w");
 	for(int i=0;i<200;i++)
@@ -93,7 +89,7 @@ void *SearchInFile(void *threadid) {
 	    }
 		i++;
 	  }
-      cout<<"Your Number was First Found in "<<tid<< "File";
+      cout<<"Your Number was First Found in "<<tid<< "File\n";
 		fclose(file[tid]);
 
 
@@ -129,7 +125,7 @@ int main (int argc, char *argv[])
 
    else if(Ichoice==2)
    {
-    cout<< "Please Enter The Number You Want to Search";
+    cout<< "Please Enter The Number You Want to Search\n";
     cin>>Isearch;
      Ifound=0;
     for(t=0; t<NUM_THREADS; t++)
