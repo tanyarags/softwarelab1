@@ -22,7 +22,7 @@ using namespace std;
 #define NUMBER_NUMBER	200
 
 int thread_stop = 0;
-
+int Isearch, Ifound;
 FILE *file[FILE_NUMBER];
 
 
@@ -32,7 +32,6 @@ void *SortInFile(void *threadid) {
     int i=0;
 	int tid;
 	tid = (int) threadid;
-	cout << "Sort thread" << tid << endl;
 	string file_name;
 	stringstream out;
 	out << tid;
@@ -69,20 +68,52 @@ void *SortInFile(void *threadid) {
 
 
 	pthread_exit(NULL);
-}
+} //SortinFile ends here
 
 
+void *SearchInFile(void *threadid) {
+	int n[200];
+    int i=0;
+	int tid;
+	tid = (int) threadid;
+	string file_name;
+	stringstream out;
+	out << tid;
+	file_name = out.str();
+	file_name = file_name + "_file";
+	file[tid] = fopen(file_name.c_str(), "r");
 
+
+	while (fscanf(file[tid], "%d\n", &n[i]) == 1)
+	{
+	if(n[i]==Isearch)
+     	{
+	 	Ifound=1;
+	  	break;
+	    }
+		i++;
+	  }
+      cout<<"Your Number was First Found in "<<tid<< "File";
+		fclose(file[tid]);
+
+
+	pthread_exit(NULL);
+} //SortinFile ends here
 
 
 int main (int argc, char *argv[])
 {
    pthread_t threads[NUM_THREADS];
-   int sort;
+   int sort,search;
    long t;
-   cout<< "Here";
+   int Ichoice;
+   cout<<"Please Enter Your Choice:\n";
+   cout<<"1. SORT\n2. SEARCH\n";
+   cin>>Ichoice;
 
-   // here the sorting starts
+   if(Ichoice==1)
+   {
+	   // here the sorting starts
    for(t=0; t<NUM_THREADS; t++)
          {
          sort = pthread_create(&threads[t], NULL, SortInFile, (void *)t);
@@ -93,10 +124,34 @@ int main (int argc, char *argv[])
            for(t=0; t<NUM_THREADS; t++){
    	       pthread_join(threads[t], NULL);
          } // here the sorting ends
+      cout<<"Sorting Done";
+      }
+
+   else if(Ichoice==2)
+   {
+    cout<< "Please Enter The Number You Want to Search";
+    cin>>Isearch;
+     Ifound=0;
+    for(t=0; t<NUM_THREADS; t++)
+          {
+          search = pthread_create(&threads[t], NULL, SearchInFile, (void *)t);
+           if(Ifound==1)
+           break;
+           if(search)
+           exit(-1);
+          }
+
+    if(Ifound == 0)
+    cout<<"Sorry, Could Not Find Your Number\n";
 
 
+   }
+
+   else
+    cout<<"Wrong Choice Entered: Exiting";
    /* Last thing that main() should do */
    pthread_exit(NULL);
+
 }
 
 
