@@ -3,7 +3,7 @@
 // Author      : tanya raghuvanshi
 // Version     :
 // Copyright   : Your copyright notice
-// Description : Pthreadmain in C++, Ansi-style
+// Description : PthreadCreate in C++, Ansi-style
 //============================================================================
 
 
@@ -29,31 +29,6 @@ void openFile(string name, int thread_number);
 void createFile(string name, int thread_number);
 void writeToFile(int data, int file_number);
 
-
-
-void *SortInFile(void *threadid) {
-	int n[200];
-    int i=0;
-	int tid;
-	tid = (int) threadid;
-	cout << "Started thread" << tid << endl;
-	string file_name;
-	stringstream out;
-	out << tid;
-	file_name = out.str();
-	file_name = file_name + "_file";
-	openFile(file_name, tid);
-	while (fscanf(file[tid], "%d\n", &n[i]) == 1)
-	    {
-		cout<<n[i];
-		i++;
-	    }
-
-	pthread_exit(NULL);
-}
-
-
-
 void *WriteFileThread(void *threadid) {
 	int tid;
 	tid = (int) threadid;
@@ -72,11 +47,10 @@ void *WriteFileThread(void *threadid) {
 }
 
 
-int main (int argc, char *argv[])
+int final (int argc, char *argv[])
 {
    pthread_t threads[NUM_THREADS];
    int rc;
-   int sort;
    long t;
    for(t=0; t<NUM_THREADS; t++){
       //printf("In main: creating thread %ld\n", t);
@@ -90,28 +64,9 @@ int main (int argc, char *argv[])
 	   pthread_join(threads[t], NULL);
    }
 
-   pthread_exit(NULL);
-
-   for(t=0; t<NUM_THREADS; t++){
-         //printf("In main: creating thread %ld\n", t);
-         sort = pthread_create(&threads[t], NULL, SortInFile, (void *)t);
-         if (sort){
-            //printf("ERROR; return code from pthread_create() is %d\n", rc);
-            exit(-1);
-         }
-      }
-      for(t=0; t<NUM_THREADS; t++){
-   	   pthread_join(threads[t], NULL);
-      }
-
-
    /* Last thing that main() should do */
    pthread_exit(NULL);
 }
-
-
-
-
 
 void createFile(string name, int thread_number) {
 	file[thread_number] = fopen(name.c_str(), "w");
@@ -124,13 +79,3 @@ void openFile(string name, int thread_number) {
 void writeToFile(int data, int file_number) {
 	fprintf(file[file_number], "%d%s", data, "\n");
 }
-
-
-
-
-
-
-
-
-
-
