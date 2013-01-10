@@ -36,18 +36,38 @@ void *SortInFile(void *threadid) {
     int i=0;
 	int tid;
 	tid = (int) threadid;
-	cout << "Started thread" << tid << endl;
+	cout << "Sort thread" << tid << endl;
 	string file_name;
 	stringstream out;
 	out << tid;
 	file_name = out.str();
 	file_name = file_name + "_file";
 	openFile(file_name, tid);
+
 	while (fscanf(file[tid], "%d\n", &n[i]) == 1)
 	    {
 		cout<<n[i];
 		i++;
 	    }
+
+	int temp;
+	//sorting here with simple bubble sort
+	for(int k=0;k<200;k++)
+	for(int j=0;j<(200-k);j++)
+	if(n[j]>n[j+1])
+	{
+	temp=n[j];
+	n[j]=n[j+1];
+	n[j+1]=temp;
+	}
+
+	createFile(file_name, tid);
+	rewind(file[tid]);
+	for (int i = 0; i < NUMBER_NUMBER; i++) {
+			writeToFile(n[i], tid);
+		}
+
+
 
 	pthread_exit(NULL);
 }
@@ -63,7 +83,8 @@ void *WriteFileThread(void *threadid) {
 	out << tid;
 	file_name = out.str();
 	file_name = file_name + "_file";
-	createFile(file_name, tid);
+	file[thread_number] = fopen(file_name.c_str(), "r");
+	rewind(file[tid]);
 	for (int i = 0; i < NUMBER_NUMBER; i++) {
 		int number = rand() % 100;
 		writeToFile(number, tid);
@@ -90,8 +111,8 @@ int main (int argc, char *argv[])
 	   pthread_join(threads[t], NULL);
    }
 
-   pthread_exit(NULL);
 
+   cout<< "Here";
    for(t=0; t<NUM_THREADS; t++){
          //printf("In main: creating thread %ld\n", t);
          sort = pthread_create(&threads[t], NULL, SortInFile, (void *)t);
